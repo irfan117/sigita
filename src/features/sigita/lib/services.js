@@ -1,30 +1,24 @@
 import { buildSystemPrompt } from "./prompt";
 
 export async function callAPI(userMessage, docs, history) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/gemini", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      system: buildSystemPrompt(docs),
-      messages: [
-        ...history.slice(-8).map((m) => ({
-          role: m.role === "assistant" ? "assistant" : "user",
-          content: m.content,
-        })),
-        { role: "user", content: userMessage },
-      ],
+      userMessage,
+      docs,
+      history: history.slice(-8),
+      systemPrompt: buildSystemPrompt(docs),
     }),
   });
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Error ${response.status}`);
+    throw new Error(err?.error || `Error ${response.status}`);
   }
 
   const data = await response.json();
-  return data.content?.[0]?.text || "Maaf, tidak ada respons.";
+  return data?.text || "Maaf, tidak ada respons.";
 }
 
 export async function extractText(file) {

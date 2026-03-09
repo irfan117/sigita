@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Create `.env.local`:
+
+```bash
+GEMINI_API_KEY=your_google_ai_api_key
+```
+
 First, run the development server:
 
 ```bash
